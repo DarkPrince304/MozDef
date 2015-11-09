@@ -7,6 +7,7 @@ Copyright (c) 2014 Mozilla Corporation
 Contributors:
 Jeff Bryner jbryner@mozilla.com
 Anthony Verez averez@mozilla.com
+Sanchit Kapoor sanchitlucknow@gmail.com
  */
 
 if (Meteor.isClient) {
@@ -18,20 +19,14 @@ if (Meteor.isClient) {
    WIDTH  = window.innerWidth;
    HEIGHT = window.innerHeight;
    SPEED = 0.01;
-   console.log("Bitch");
    controls=null;
    
    function init() {
     scene = new THREE.Scene();
-    console.log(scene);
     initMesh();
-    console.log("a");
     initCamera();
-    console.log("b");
     initLights();
-    console.log("c");
     initRenderer();
-    console.log("d");
 
     document.getElementById("container").appendChild(renderer.domElement);
     controls = new THREE.OrbitControls( camera );
@@ -61,7 +56,6 @@ if (Meteor.isClient) {
 
     var mesh = null;
     function initMesh() {
-        console.log(result);
         var loader = new THREE.JSONLoader();
         var json = loader.parse(result);
         var geometry = json.geometry;
@@ -71,7 +65,6 @@ if (Meteor.isClient) {
         mesh.translation = THREE.GeometryUtils.center(geometry);
         mesh.castShadow = true;
         scene.add(mesh);
-        console.log(json);
         /*var json = loader.parse(result);
         var geometry = json.geometry;
         var materials = json.materials;
@@ -93,7 +86,6 @@ if (Meteor.isClient) {
     }
 
     Template.vr.rendered = function () {
-        console.log("Fuck ");
         init();
         render();
         document.addEventListener("keydown", function(evt) {
