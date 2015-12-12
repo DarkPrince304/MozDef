@@ -696,7 +696,9 @@ if (Meteor.isClient) {
    var mesh2 = null;
    var mesh3 = null;
    var spotlight = null;
-   var loader = null;
+  var loader = null;
+  var coords = {};
+  var projector = null;
 
   function init() {
     initMesh();
@@ -724,6 +726,7 @@ if (Meteor.isClient) {
     camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT, 1, 10000);
     spotLight = new THREE.SpotLight( 0xffffff , 1);
     renderer = new THREE.WebGLRenderer({ antialias: true });
+    projector = new THREE.Projector();
   }
 
     function restartEngine(parameters, x, z)
@@ -953,6 +956,22 @@ if (Meteor.isClient) {
         document.addEventListener("keydown", listener);
         parsedb();
        };//end template.attackers.rendered
+
+  Template.vr.events({
+    "mousemove": function(e) {
+      // console.log(e);
+      var mouse = {};
+      mouse.x = ( e.clientX / WIDTH ) * 2 - 1;
+      mouse.y = - ( e.clientY / HEIGHT ) * 2 + 1;
+      var vector = new THREE.Vector3( mouse.x, mouse.y);
+      projector.unprojectVector( vector, camera );
+      var dir = vector.sub( camera.position ).normalize();
+      var distance = - camera.position.z / dir.z;
+      var pos = camera.position.clone().add( dir.multiplyScalar( distance ));
+      console.log(pos.x, pos.y);
+      // checkForNameplateVisible();
+    }
+  })
 
     Template.vr.destroyed = function () {
         container.removeChild(renderer.domElement);
