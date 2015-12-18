@@ -700,6 +700,7 @@ if (Meteor.isClient) {
   var coords = {};
   var projector = null;
   var sceneObjects = [];
+  var count = 0;
 
   function init() {
     initMesh();
@@ -736,16 +737,50 @@ if (Meteor.isClient) {
     engine = new ParticleEngine();
     parameters.positionBase.x=x;
     parameters.positionBase.z=z;
+
+    // Create enclosing transparent sphere
     var tempSphere = new THREE.SphereGeometry(80);
-    // console.log(tempSphere, x, z);
-    var material = new THREE.MeshBasicMaterial( { transparent: true, opacity: 0 } );
+    // var material = new THREE.MeshBasicMaterial( { transparent: true, opacity: 0 } );
+    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
     var sphere = new THREE.Mesh( tempSphere, material );
-    scene.add( sphere );
     sphere.position.x = x;
     sphere.position.z = z;
     sphere.name = "EnclosingSphere";
     sceneObjects.push(sphere);
-    // scene.children.push(tempSphere);
+
+    // Create nameplate to be displayed on hover over the transparent sphere
+    var hoverElm = $('<div class="attackshoverboard container-fluid"> This is some random data </div>');
+    var nameplate=new THREE.CSS3DObject(hoverElm.get()[0]);
+    var npOffset=new THREE.Vector3();
+    nameplate.name='nameplate' + count++;
+    // nameplate.dbid=character.id;
+    npOffset.x=0;
+    npOffset.y=0;
+    npOffset.z=.5;
+    nameplate.offset=npOffset;
+    nameplate.scale.x=sphere.scale;
+    nameplate.scale.y=sphere.scale;
+    nameplate.scale.z=sphere.scale;
+    nameplate.position.copy(sphere.position);
+    nameplate.position.add(npOffset);
+    console.log(nameplate);
+    console.log(nameplate.element);
+    nameplate.element.style.display='none';
+    // nameplate.element.style.backgroundColor='green';
+    // nameplate.element.style.height='1000px';
+    // nameplate.element.style.width='1000px';
+    // nameplate.element.style.zIndex='9999';
+
+    //add everything.
+    //threejs doesn't take children that aren't threejs object3d instances
+  //so add the nameplate manually.
+    
+    sphere.children.push(nameplate);
+    nameplate.parent=sphere;
+    console.log(nameplate);
+    scene.add(nameplate);
+    scene.add( sphere );
+
     engine.setValues( parameters );
     engine.initialize();
   }
@@ -1026,14 +1061,35 @@ if (Meteor.isClient) {
   
       // var intersects = raycaster.intersectObjects(scene.children);
       var intersects = raycaster.intersectObjects(sceneObjects, true);
-      console.log(intersects);
+      // console.log(intersects);
 
-      intersects.forEach(function(intersectedObj) {
+      // console.log(scene.getObjectByName('nameplate'));
+
+    if (intersects.length > 0){
+      selectedObject = intersects[ 0 ].object.parent;
+      // console.log(selectedObject.children);
+      nameplate=selectedObject.getObjectByName('nameplate1');
+      // var nameplate = {};
+      // selectedObject.children.forEach(function(sceneObj) {
+        if (nameplate) {
+          // nameplate = sceneObj;
+          console.log(nameplate);
+          nameplate.element.style.display='inline';
+          nameplate.lookAt( camera.position );
+          nameplate.position.copy(selectedObject.position);
+        }
+      // });
+    
+      }
+
+
+      // intersects.forEach(function(intersectedObj) {
       //   // console.log(intersectedObj.object.name, intersectedObj.name);
         // console.log(intersectedObj.parent.getObjectByName("EnclosingSphere"));
       //     console.log('Hey');
       //   }
-      });
+      // });
+
 
       // var vector = new THREE.Vector3( mouse.x, mouse.y);
       // projector.unprojectVector( vector, camera );
