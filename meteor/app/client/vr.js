@@ -701,6 +701,7 @@ if (Meteor.isClient) {
   var projector = null;
   var sceneObjects = [];
   var count = 0;
+  var cssRenderer = null;
 
   function init() {
     initMesh();
@@ -709,6 +710,7 @@ if (Meteor.isClient) {
     initRenderer();
 
     document.getElementById("container").appendChild(renderer.domElement);
+    document.getElementById("container").appendChild(cssRenderer.domElement);
     controls = new THREE.OrbitControls( camera );
 
     stats = new Stats();
@@ -728,6 +730,7 @@ if (Meteor.isClient) {
     spotLight = new THREE.SpotLight( 0xffffff , 1);
     renderer = new THREE.WebGLRenderer({ antialias: true });
     projector = new THREE.Projector();
+    cssRenderer = new THREE.CSS3DRenderer();
   }
 
   function restartEngine(parameters, x, z)
@@ -794,6 +797,10 @@ if (Meteor.isClient) {
   function initRenderer() {
     renderer.setSize(WIDTH, HEIGHT);
     renderer.shadowMapEnabled = true;  // enable shadows
+
+    cssRenderer.setSize(WIDTH, HEIGHT);
+    cssRenderer.domElement.style.position = 'absolute';
+    cssRenderer.domElement.style.top = 0;
 
   }
 
@@ -876,6 +883,7 @@ if (Meteor.isClient) {
     requestAnimationFrame(render);
     update();
     renderer.render(scene, camera);
+    cssRenderer.render(scene, camera);
   }
 
   var start = null;
@@ -1068,7 +1076,7 @@ if (Meteor.isClient) {
     if (intersects.length > 0){
       selectedObject = intersects[ 0 ].object.parent;
       // console.log(selectedObject.children);
-      nameplate=selectedObject.getObjectByName('nameplate1');
+      nameplate = selectedObject.getObjectByName('nameplate1');
       // var nameplate = {};
       // selectedObject.children.forEach(function(sceneObj) {
         if (nameplate) {
