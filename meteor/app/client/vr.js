@@ -992,7 +992,8 @@ if (Meteor.isClient) {
         var attackRank = world[attacks[att]].rank;
         // Create enclosing transparent sphere
         var tempSphere = new THREE.SphereGeometry(70);
-        var material = new THREE.MeshBasicMaterial( { transparent: true, opacity: 0 } );
+        // var material = new THREE.MeshBasicMaterial( { transparent: true, opacity: 0 } );
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         var sphere = new THREE.Mesh( tempSphere, material );
         sphere.position.x = rank_coord_mapping[attackRank].x;
         sphere.position.z = rank_coord_mapping[attackRank].z;
@@ -1002,7 +1003,20 @@ if (Meteor.isClient) {
         sceneObjects.push(sphere);
   
         // Create nameplate to be displayed on hover over the transparent sphere
-        var hoverElm = $('<div class="attackshoverboard container-fluid">  </div>');
+        var hoverElm = $('<div class="container-fluid attackshoverboard">' + 
+          '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style=" display: block; position: static; margin-bottom: 5px; *width: 180px;">' +
+            '<li class="row id"><a tabindex="-1" href="#">Rank #' + attackRank + '</a></li>' +
+            '<li class="row id"><a tabindex="-1" href="#">' + attacks[att] + '</a></li>' +
+            '<li class="divider"></li>' +
+            '<li class="dropdown-submenu"><a tabindex="-1" href="#">List of attacks</a>' +
+            '<ul class="dropdown-menu attacks-list">' +
+              '<li><a tabindex="-1" href="#">Attack #1</a></li>' +
+              '<li><a tabindex="-1" href="#">Attack #2</a></li>' +
+              '<li><a tabindex="-1" href="#">Attack #3</a></li>' +
+            '</ul>' +
+            '</li>' +
+          '</ul>' +
+        '</div>');
         var nameplate = new THREE.CSS3DObject(hoverElm.get()[0]);
         var npOffset = new THREE.Vector3();
         nameplate.name = 'nameplate' + attackRank;
@@ -1091,25 +1105,8 @@ if (Meteor.isClient) {
         }
       }
 
-
-
-      // intersects.forEach(function(intersectedObj) {
-      //   // console.log(intersectedObj.object.name, intersectedObj.name);
-        // console.log(intersectedObj.parent.getObjectByName("EnclosingSphere"));
-      //     console.log('Hey');
-      //   }
-      // });
-
-
-      // var vector = new THREE.Vector3( mouse.x, mouse.y);
-      // projector.unprojectVector( vector, camera );
-      // var dir = vector.sub( camera.position ).normalize();
-      // var distance = - camera.position.z / dir.z;
-      // var pos = camera.position.clone().add( dir.multiplyScalar( distance ));
-      // checkIfDisplayNameplate(pos);
-      // checkForNameplateVisible();
-    }
-  })
+   }
+  });
 
   Template.vr.destroyed = function () {
     container.removeChild(renderer.domElement);
