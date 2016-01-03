@@ -8,6 +8,7 @@
   Jeff Bryner jbryner@mozilla.com
   Anthony Verez averez@mozilla.com
   Sanchit Kapoor sanchitlucknow@gmail.com
+  Avijit Gupta 526avijit@gmail.com
 */
 
 if (Meteor.isClient) {
