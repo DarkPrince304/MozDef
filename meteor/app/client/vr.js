@@ -264,7 +264,7 @@ if (Meteor.isClient) {
   };//end template.attackers.rendered
 
   Template.vr.attackDetails = function() {
-    return { region: 'MozWiki', rank: '1' }
+    return { region: 'MozWiki', rank: '1', attacks: [ {name: 'broxss'}, {name: 'brosqli'}] }
   }
 
   Template.vr.events({
@@ -298,6 +298,10 @@ if (Meteor.isClient) {
         });
       }
     }
+
+    // "click #show-attacks-list": function() {
+
+    // }
 
   });
 
