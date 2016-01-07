@@ -52,6 +52,13 @@ if (Meteor.isClient) {
     {x: -992, z: -962},
     {x: -754, z: -1087}
   ];
+  var ATTACKANIMATIONS = {
+    'broxss': Examples.fireball,
+    'bro_notice': Examples.smoke,
+    'brosqli': Examples.candle,
+    'brotunnel': Examples.rain,
+    'brointel': Examples.clouds
+  };
   var WIDTH  = window.innerWidth;
   var HEIGHT = window.innerHeight;
   var SPEED = 0.01;
@@ -193,28 +200,20 @@ if (Meteor.isClient) {
       sphereMake(-5,20,-65);
   }
 
-  attack_animation_mapping = {
-    'broxss': Examples.fireball,
-    'bro_notice': Examples.smoke,
-    'brosqli': Examples.candle,
-    'brotunnel': Examples.rain,
-    'brointel': Examples.clouds
-  }
-
   function parsedb() {
     Meteor.subscribe("attackers-summary-yash", onReady = function() {
 
       attackers.find().forEach(function(element) {
         // TODO: Take care of timestamp
-        for(ev in element.events) {
-          var evt = element.events[ev];
-          if (world[evt.documentsource.details.host]) {
-            world[evt.documentsource.details.host].push(evt.documentsource);
+        element.events.forEach(function(evt) {
+          var evtHost = evt.documentsource.details.host;
+          if (world[evtHost]) {
+            world[evtHost].push(evt.documentsource);
           } else {
-            world[evt.documentsource.details.host] = [evt.documentsource];
-            world[evt.documentsource.details.host].rank = attackedIds++;
+            world[evtHost] = [evt.documentsource];
+            world[evtHost].rank = attackedIds++;
           }
-        }
+        });
       });
 
       var attacks = Object.keys(world).map(function(key) {
@@ -225,10 +224,10 @@ if (Meteor.isClient) {
         return arr[0];
       });
 
-      for (att in attacks) {
-        var attackRank = world[attacks[att]].rank;
+      attacks.forEach(function(host) {
+        var attackRank = world[host].rank;
         // Create enclosing transparent sphere
-        var sphereGeometry = new THREE.SphereGeometry(80);
+        var sphereGeometry = new THREE.SphereGeometry(70);
         var sphereMaterial = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 });
         // var sphereMaterial = new THREE.MeshBasicMaterial();
         var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -239,15 +238,16 @@ if (Meteor.isClient) {
         sceneObjects.push(sphere);
         scene.add(sphere);
 
-        var service = attacks[att];
-        for (i in world[service]) {
-          attack_type = world[service][i].category;
-          if (Object.keys(attack_animation_mapping).indexOf(attack_type) > -1) {
-            attack = attack_animation_mapping[attack_type];
-            restartEngine(attack, RANKCOORDINATES[att].x, RANKCOORDINATES[att].z);
+        world[host].forEach(function(attack, index) {
+          if (typeof attack === "object") {
+            attackType = attack.category;
+            if (Object.keys(ATTACKANIMATIONS).indexOf(attackType) > -1) {
+              mappedAttack = ATTACKANIMATIONS[attackType];
+              restartEngine(mappedAttack, RANKCOORDINATES[index].x, RANKCOORDINATES[index].z);
+            }
           }
-        }
-      }
+        });
+      });
 
     });
   }
