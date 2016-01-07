@@ -192,12 +192,6 @@ if (Meteor.isClient) {
       restartEngine(Examples.rain,200,-300);
     else if(evt.keyCode === 50)
       restartEngine(Examples.fountain);
-    else if(evt.keyCode === 51)
-      sphereMake(10,15,35);
-    else if(evt.keyCode === 52)
-      sphereMake(15,15,-30);
-    else if(evt.keyCode === 53)
-      sphereMake(-5,20,-65);
   }
 
   function parsedb() {
@@ -216,12 +210,8 @@ if (Meteor.isClient) {
         });
       });
 
-      var attacks = Object.keys(world).map(function(key) {
-        return [key, world[key].length];
-      }).sort(function(first, second) {
-        return second[1] - first[1];
-      }).map(function(arr){
-        return arr[0];
+      var attacks = Object.keys(world).sort(function(prev, current) {
+        return world[current].length - world[prev].length;
       });
 
       attacks.forEach(function(host) {
@@ -289,7 +279,7 @@ if (Meteor.isClient) {
 
         intersects.forEach(function(intersect) {
           // console.log(intersect);
-          if (intersect.object.rank) {
+          if (typeof intersect.object.rank !== "undefined") {
             // Open the nav if not already opened
             if (!sideNav.hasClass(OPENNAV)) {
               sideNav.addClass(OPENNAV);
