@@ -206,6 +206,7 @@ if (Meteor.isClient) {
           } else {
             world[evtHost] = [evt.documentsource];
             world[evtHost].rank = attackedIds++;
+            // world[evtHost].host = evtHost || 'hard-coded';
           }
         });
       });
@@ -225,6 +226,7 @@ if (Meteor.isClient) {
         sphere.position.z = RANKCOORDINATES[attackRank].z;
         sphere.name = "EnclosingSphere" + attackRank;
         sphere.rank = attackRank;
+        sphere.host = host || 'hard-coded';
         sceneObjects.push(sphere);
         scene.add(sphere);
 
@@ -244,7 +246,7 @@ if (Meteor.isClient) {
 
   Template.vr.created = function () {
     initVariables();
-  }
+  };
 
   Template.vr.rendered = function () {
     init();
@@ -253,9 +255,14 @@ if (Meteor.isClient) {
     parsedb();
   };//end template.attackers.rendered
 
-  Template.vr.attackDetails = function() {
-    return { region: 'MozWiki', rank: '1', attacks: [ {name: 'broxss'}, {name: 'brosqli'}] }
-  }
+  Template.vr.helpers({
+    attackRank: function() {
+      return Session.get('attackRank');
+    },
+    attackRegion: function() {
+      return Session.get('attackRegion');
+    }
+  });
 
   Template.vr.events({
 
@@ -279,13 +286,20 @@ if (Meteor.isClient) {
 
         intersects.forEach(function(intersect) {
           // console.log(intersect);
-          if (typeof intersect.object.rank !== "undefined") {
+          var attackRank = intersect.object.rank;
+          var attackRegion = intersect.object.host;
+          if (typeof attackRank !== "undefined") {
             // Open the nav if not already opened
             if (!sideNav.hasClass(OPENNAV)) {
               sideNav.addClass(OPENNAV);
             }
+            Session.set('attackRank', attackRank);
+            Session.set('attackRegion', attackRegion);
           }
         });
+      }
+      else if(sideNav.hasClass(OPENNAV)) {
+        sideNav.removeClass(OPENNAV);
       }
     }
 
