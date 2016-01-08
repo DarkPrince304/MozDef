@@ -1,16 +1,16 @@
 /*
-  This Source Code Form is subject to the terms of the Mozilla Public
-  License, v. 2.0. If a copy of the MPL was not distributed with this
-  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-  Copyright (c) 2014 Mozilla Corporation
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ Copyright (c) 2014 Mozilla Corporation
 
-  Contributors:
-  Jeff Bryner jbryner@mozilla.com
-  Anthony Verez averez@mozilla.com
-  Sanchit Kapoor sanchitlucknow@gmail.com
-  Yash Mehrotra yashmehrotra95@gmail.com
-  Avijit Gupta 526avijit@gmail.com
-*/
+ Contributors:
+ Jeff Bryner jbryner@mozilla.com
+ Anthony Verez averez@mozilla.com
+ Sanchit Kapoor sanchitlucknow@gmail.com
+ Yash Mehrotra yashmehrotra95@gmail.com
+ Avijit Gupta 526avijit@gmail.com
+ */
 
 if (Meteor.isClient) {
 
@@ -244,7 +244,7 @@ if (Meteor.isClient) {
 
   Template.vr.created = function () {
     initVariables();
-  }
+  };
 
   Template.vr.rendered = function () {
     init();
@@ -253,16 +253,12 @@ if (Meteor.isClient) {
     parsedb();
   };//end template.attackers.rendered
 
-  Template.vr.attackDetails = function() {
-    return { region: 'MozWiki', rank: '1', attacks: [ {name: 'broxss'}, {name: 'brosqli'}] }
-  }
-
   Template.vr.events({
 
     "click #container": function(e) {
       var mouse = {
         x: (e.clientX / WIDTH)*2 - 1,
-        y: (e.clientY / HEIGHT)*2 - 1,
+        y: (e.clientY / HEIGHT)*2 - 1
       };
       var mouseVector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
       projector.unprojectVector(mouseVector, camera);
@@ -272,14 +268,10 @@ if (Meteor.isClient) {
       console.log(intersects);
 
       if (intersects.length) {
-        // Blaze.renderWithData(Template.vrSidenav,
-        //                      function() {
-        //                        return attackers.findOne({})
-        //                      });
-
         intersects.forEach(function(intersect) {
           // console.log(intersect);
           if (typeof intersect.object.rank !== "undefined") {
+            Blaze.renderWithData(Template.vrSidenav, {rank: intersect.object.rank});
             // Open the nav if not already opened
             if (!sideNav.hasClass(OPENNAV)) {
               sideNav.addClass(OPENNAV);
