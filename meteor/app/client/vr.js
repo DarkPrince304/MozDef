@@ -195,6 +195,18 @@ if (Meteor.isClient) {
           if (evtHost == undefined) {
             return;
           }
+          // TODO: Instead of query parameters, lets do it a filter dropdown
+          //       and store read/unread/all in session
+          if (Router.current().params.query.type === 'read') {
+            if (!doc.read || doc.read == undefined) {
+              return;
+            }
+          }
+          if (Router.current().params.query.type === 'unread') {
+            if (doc.read) {
+              return;
+            }
+          }
           if (world[evtHost]) {
             world[evtHost].push(doc);
           } else {
