@@ -184,7 +184,7 @@ if (Meteor.isClient) {
   }
 
   function parsedb() {
-    Meteor.subscribe("attackers-summary-yash", onReady = function() {
+    Meteor.subscribe("attackers-summary-landmass", onReady = function() {
 
       // var filterType = Session.get('filterType');
       attackers.find().forEach(function(element) {
